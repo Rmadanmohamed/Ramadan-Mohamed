@@ -56,7 +56,7 @@ PHP 8.1 or a compatible later 8.x release, Composer, Node.js/npm (a supported LT
 
 ## Installation and setup
 
-**Current blocker:** the committed post controller contains a stray slash after the user assignment, which prevents PHP parsing. The commands below describe the intended setup; running the application requires resolving that source issue in a local working copy. This README does not modify source code.
+**Repair branch:** Post controller parsing, missing User model/factory, password reset scaffolding and owner-only mutation checks have been repaired. Laravel 10 is a legacy framework line; dependency audit, integration tests and production suitability still require verification.
 
 ```bash
 git clone https://github.com/Rmadanmohamed/Ramadan-Mohamed.git
@@ -81,7 +81,7 @@ DB_USERNAME=YOUR_LOCAL_DB_USER
 DB_PASSWORD=YOUR_LOCAL_DB_PASSWORD
 ```
 
-After resolving the parse issue:
+After configuring an isolated local database:
 
 ```bash
 php artisan migrate
@@ -109,7 +109,7 @@ Use the tracked `.env.example` as the template. Do not commit your populated `.e
 
 ## Usage
 
-After setup and resolution of the known blockers, register or log in through the authentication pages and use the post resource routes to manage posts. `php artisan route:list` lists the registered routes.
+After setup, register or log in through the authentication pages and use the post resource routes to manage posts. `php artisan route:list` lists the registered routes.
 
 ## Testing and validation
 
@@ -120,7 +120,7 @@ php artisan test
 npm run build
 ```
 
-The repository contains example unit and feature tests, not a comprehensive CRUD or authorization suite. Tests and builds were not executed during this documentation audit.
+The repository includes owner/non-owner CRUD and mass-assignment regression tests. PHPUnit is configured to use an isolated in-memory SQLite database; no production database should be used. Tests and builds were not executed during this documentation audit.
 
 ## Limitations and responsible deployment
 
