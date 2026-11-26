@@ -1,0 +1,25 @@
+name: Laravel quality
+on:
+  pull_request:
+  push:
+    branches: ['audit/final-laravel-integrity']
+permissions:
+  contents: read
+jobs:
+  laravel:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@11bd71901bbe5b1630ceea73d27597364c9af683
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020
+        with:
+          node-version: '22'
+      - run: php --version && composer --version
+      - run: find app routes database tests -name '*.php' -print0 | xargs -0 -n1 php -l
+      - run: composer install --no-interaction --prefer-dist
+      - run: cp .env.example .env && php artisan key:generate
+      - run: npm ci
+      - run: npm run build
+      - run: php artisan route:list
+      - run: php artisan test
+      - run: composer audit --locked
