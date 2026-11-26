@@ -9,6 +9,7 @@
         <div class="card-body">
             <p>{{ $post->description }}</p>
         </div>
+        @if ((string) auth()->id() === (string) $post->user_id)
         <div class="card-footer">
             <a href="{{ route('posts.edit', $post->id) }}" class="btn btn-warning">تعديل</a>
             <form action="{{ route('posts.destroy', $post->id) }}" method="POST" class="d-inline">
@@ -17,6 +18,7 @@
                 <button type="submit" class="btn btn-danger">حذف</button>
             </form>
         </div>
+        @endif
     </div>
 </div>
 @endsection
