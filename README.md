@@ -29,9 +29,9 @@ flowchart LR
 |---|---|---|
 | PHP | ^8.1 | Runtime not pinned |
 | Laravel | ^10.0 | 10.48.25 |
-| Laravel UI | ^4.0 | 4.6.1 |
+| Laravel UI | ^4.6 | 4.6.1 |
 | Laravel Sanctum | ^3.2 | 3.3.3 |
-| PHPUnit | ^10.1 | 10.5.38 |
+| PHPUnit | ^10.0 | 10.5.38 |
 | Vite | ^4.0 | 4.5.9 |
 | Laravel Vite plugin | See package.json | 0.7.8 |
 | Bootstrap | See package.json | 5.3.3 |
