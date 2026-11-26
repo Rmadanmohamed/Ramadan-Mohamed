@@ -2,15 +2,16 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Post;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class PostController extends Controller
 {
     public function __construct()
-{
-    $this->middleware('auth');
-}
+    {
+        $this->middleware('auth');
+    }
 
     public function index()
     {
@@ -25,49 +26,47 @@ class PostController extends Controller
 
     public function store(Request $request)
     {
-
-        $data = $request->all();
-        $data['user_id'] = auth()->user()->id; /
-
-        $request->validate([
-            'title' => 'required|unique:posts,title',
-            'description' => 'required',
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255', 'unique:posts,title'],
+            'description' => ['required', 'string'],
         ]);
-
-        Post::create($data);
-
+        $post = new Post($data);
+        $post->user()->associate($request->user());
+        $post->save();
         return redirect()->route('posts.index');
     }
-
 
     public function show(Post $post)
     {
         return view('posts.show', compact('post'));
     }
 
-
     public function edit(Post $post)
     {
+        $this->requireOwner($post);
         return view('posts.edit', compact('post'));
     }
 
-
     public function update(Request $request, Post $post)
     {
-        $request->validate([
-            'title' => 'required|unique:posts,title,' . $post->id,
-            'description' => 'required',
+        $this->requireOwner($post);
+        $data = $request->validate([
+            'title' => ['required', 'string', 'max:255', Rule::unique('posts', 'title')->ignore($post)],
+            'description' => ['required', 'string'],
         ]);
-
-        $post->update($request->all());
-
+        $post->update($data);
         return redirect()->route('posts.index');
     }
 
     public function destroy(Post $post)
     {
+        $this->requireOwner($post);
         $post->delete();
-
         return redirect()->route('posts.index');
+    }
+
+    private function requireOwner(Post $post): void
+    {
+        abort_unless((string) $post->user_id === (string) auth()->id(), 403);
     }
 }
