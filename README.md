@@ -56,7 +56,7 @@ PHP 8.1 or a compatible later 8.x release, Composer, Node.js/npm (a supported LT
 
 ## Installation and setup
 
-**Current blocker:** the committed post controller contains a stray slash after the user assignment, which prevents PHP parsing. The commands below describe the intended setup; running the application requires resolving that source issue in a local working copy. This README does not modify source code.
+**Repair branch:** the post-controller syntax, required base controller, user model and API route stub have been repaired. Full Laravel boot and database tests still require dependency installation.
 
 ```bash
 git clone https://github.com/Rmadanmohamed/Ramadan-Mohamed.git
@@ -81,7 +81,7 @@ DB_USERNAME=YOUR_LOCAL_DB_USER
 DB_PASSWORD=YOUR_LOCAL_DB_PASSWORD
 ```
 
-After resolving the parse issue:
+After configuring a local database:
 
 ```bash
 php artisan migrate
@@ -109,7 +109,7 @@ Use the tracked `.env.example` as the template. Do not commit your populated `.e
 
 ## Usage
 
-After setup and resolution of the known blockers, register or log in through the authentication pages and use the post resource routes to manage posts. `php artisan route:list` lists the registered routes.
+After setup, register or log in through the authentication pages and use the post resource routes to manage posts. `php artisan route:list` lists the registered routes.
 
 ## Testing and validation
 
@@ -124,10 +124,10 @@ The repository contains example unit and feature tests, not a comprehensive CRUD
 
 ## Limitations and responsible deployment
 
-- The parse error described above blocks normal execution.
-- The post model does not include the required user_id in its fillable attributes; creation needs reconciliation with the database schema.
-- Post update/delete ownership checks need implementation and verification.
-- Authentication routes are declared twice; the about route points at a post action without a post parameter.
+- Full application boot and build remain unverified.
+- Post ownership is assigned via the authenticated user relationship; only title and description are mass assignable.
+- Edit, update and delete enforce ownership in the controller; integration tests are included but not yet run.
+- Duplicate authentication routes were removed; `/about` redirects to the post list. Password-reset routes are disabled until missing controllers are restored. The user factory required by optional seeders remains absent.
 - Do not deploy publicly until authentication, authorization and validation have been reviewed.
 
 ## Screenshots and demo
@@ -143,3 +143,7 @@ The Composer manifest declares MIT for the Laravel application scaffold. No stan
 Ramadan Mohamed Hassan — AI Engineer | AI Researcher | AI Automation | LLM & RAG Systems | Machine Learning
 
 [Portfolio](https://ramadan-ai-portfolio.vercel.app/) · [LinkedIn](https://www.linkedin.com/in/ramadan-mohamed-89085a366/) · [GitHub](https://github.com/Rmadanmohamed) · [Email](mailto:ramadanmohameddd3@gmail.com)
+
+## Repair-branch regression testing
+
+Use a disposable SQLite database, never a production database. After installing Composer dependencies, run `DB_CONNECTION=sqlite DB_DATABASE=:memory: php artisan test --filter=PostOwnershipTest` on Linux/macOS, or set those environment variables in PowerShell before running the test. The test verifies authenticated ownership assignment and rejects cross-user edits and deletes. The test was not executed in this audit.
